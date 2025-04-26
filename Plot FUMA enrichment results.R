@@ -5,7 +5,7 @@ library(stringr)
 ## Load the top 100 CpGs associated with BMI at age 14
 enrichment_results <- read.csv("top100_fuma.csv")
 
-# Reorder GeneSet by adjP (smallest p-value on top)
+# Reorder geneset by adjP and remove "_" from the terms
 enrichment_results$GeneSet <- enrichment_results$GeneSet %>%
   str_replace_all("_", " ")
 
@@ -37,7 +37,6 @@ ggsave("top100_fuma.pdf", width = 8, height = 6)
 ## Load the negatively associated CpGs among top 100 CpGs
 enrichment_results <- read.csv("top100_fuma_neg.csv")
 
-# Reorder GeneSet by adjP (smallest p-value on top)
 enrichment_results$GeneSet <- enrichment_results$GeneSet %>%
   str_replace_all("_", " ")
 
