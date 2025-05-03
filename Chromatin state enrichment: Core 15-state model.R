@@ -219,14 +219,14 @@ top100_neg_summary_df2 <- do.call(rbind, lapply(names(top100_neg_results_list2),
 
 # Create a mapping vector
 eid_mapping <- c(
-  "E071" = "Brain hippocampus middle",
-  "E074" = "Brain substantia nigra",
-  "E068" = "Brain anterior caudate",
-  "E069" = "Brain cingulate gyrus",
-  "E072" = "Brain inferior temporal lobe",
-  "E067" = "Brain angular gyrus",
-  "E073" = "Brain dorsolateral prefrontal cortex",
-  "E070" = "Brain germinal matrix"
+  "E071" = "Hippocampus middle",
+  "E074" = "Substantia nigra",
+  "E068" = "Anterior caudate",
+  "E069" = "Cingulate gyrus",
+  "E072" = "Inferior temporal lobe",
+  "E067" = "Angular gyrus",
+  "E073" = "Dorsolateral prefrontal cortex",
+  "E070" = "Germinal matrix"
 )
 
 # Apply mapping to both dataframes
@@ -234,20 +234,20 @@ top100_pos_summary_df$tissue <- eid_mapping[top100_pos_summary_df$tissue]
 top100_neg_summary_df$tissue <- eid_mapping[top100_neg_summary_df$tissue]
 
 eid_to_name <- c(
-  "E062" = "Primary mononuclear cells (from PB)",
-  "E034" = "Primary T cells from primary blood (from PB)",
-  "E045" = "Primary T cells effector/memory enriched (PB)",
-  "E033" = "Primary T cells from cord blood",
-  "E044" = "Primary T regulatory cells (from PB)",
-  "E043" = "Primary T helper cells (from PB)",
-  "E039" = "Primary T helper naive cells (from PB)",
-  "E041" = "Primary T helper cells PMA-I stimulated",
-  "E042" = "Primary T helper 17 cells PMA-I stimulated",
-  "E040" = "Primary T helper memory cells (from PB) 1",
-  "E037" = "Primary T helper memory cells (from PB) 2",
-  "E048" = "Primary T CD8+ memory cells (from PB)",
-  "E038" = "Primary T helper naive cells (from PB)",
-  "E047" = "Primary T CD8+ naive cells (from PB)"
+  "E062" = "PBMCs",
+  "E034" = "CD3+ T cells (PB)",
+  "E045" = "CD4+ Tmem (PB)",
+  "E033" = "CD3+ T cells (cord)",
+  "E044" = "Tregs",
+  "E043" = "CD4+ Th cells",
+  "E039" = "Naive CD4+ T (CD45RA+)",
+  "E041" = "Stim. CD4+ Th (IL17-)",
+  "E042" = "Stim. Th17 (IL17+)",
+  "E040" = "CD4+ Tmem (CD45RO+)",
+  "E037" = "CD4+ Tmem",
+  "E048" = "CD8+ Tmem",
+  "E038" = "Naive CD4+ T (unsorted)",
+  "E047" = "Naive CD8+ T"
 )
 
 top100_pos_summary_df2$tissue <- eid_to_name[top100_pos_summary_df2$tissue]
