@@ -286,18 +286,24 @@ make_enrichment_heatmap <- function(summary_df, title = "") {
     row_names_gp = gpar(fontsize = 10),
     column_names_gp = gpar(fontsize = 10),
     cell_fun = function(j, i, x, y, width, height, fill) {
-      grid.rect(x, y, width, height, gp = gpar(fill = fill, col = NA))
+      grid::grid.rect(x, y, width, height, gp = grid::gpar(fill = fill, col = "black"))  # box with border
       pval <- p_mat[i, j]
       if (!is.na(pval)) {
-        if (pval < 0.05) {
-          grid.points(x, y, pch = 16, size = unit(2, "mm"), gp = gpar(col = "black"))
+        stars <- if (pval < 0.001) {
+          "***"
+        } else if (pval < 0.01) {
+          "**"
+        } else if (pval < 0.05) {
+          "*"
         } else {
-          grid.points(x, y, pch = 1, size = unit(2, "mm"), gp = gpar(col = "black"))
+          ""
+        }
+        if (stars != "") {
+          grid::grid.text(stars, x = x, y = y, gp = grid::gpar(fontsize = 8, col = "black",fontface = "bold"))
         }
       }
     }
   )
-  
   return(ht)
 }
 
