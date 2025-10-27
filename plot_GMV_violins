@@ -1,0 +1,68 @@
+library(ggdist)
+library(ggplot2)
+library(patchwork)
+library(dplyr)
+library(rlang)
+
+# Load data
+data1 <- read.csv("mediation model/for fu3-bl plot.csv")
+
+# ROI sum
+roi_names <- c("Frontal_Inf_Orb_2_L", "Frontal_Inf_Tri_L", "Rectus_R",
+               "Temporal_Mid_L", "Temporal_Mid_R")
+data1$sum <- rowSums(data1[, roi_names], na.rm = TRUE)
+
+# Residualise all ROIs
+covariates <- "sex + s1 + s2 + s3 + s4 + s5 + s6 + s7 + tiv_diff"
+
+for (r in c(roi_names, "sum")) {
+  model_formula <- as.formula(paste(r, "~", covariates))
+  data1[[paste0(r, "_resid")]] <- resid(lm(model_formula, data = data1))
+}
+
+# Prepare final dataframe
+data2 <- data1 %>% 
+  mutate(Group = factor(Group,
+                        levels = c("normal BMI", "overweight"),
+                        labels = c("Normal BMI", "Overweight")))
+
+# Plot half-violin + boxplot + p-value
+plot_halfviolin <- function(df, yvar, label = NULL, ylim = c(-0.008, 0.01)) {
+  
+  # If no label provided → use variable name
+  if (is.null(label)) label <- yvar
+  
+  # t-test
+  formula <- as.formula(paste(yvar, "~ Group"))
+  pval <- signif(t.test(formula, data = df)$p.value, 2)
+  
+  ggplot(df, aes(x = Group, y = !!sym(yvar), fill = Group)) +
+    stat_halfeye(adjust = .5, width = .6, .width = 0,
+                 justification = -.3, point_colour = NA) +
+    geom_boxplot(width = .15, outlier.shape = NA, alpha = 0.6) +
+    stat_summary(fun = mean, geom = "point", size = 3, color = "black") +
+    coord_cartesian(ylim = ylim) +
+    scale_fill_manual(values = c("grey60", "orangered")) +
+    theme_bw(base_size = 14) +
+    theme(panel.grid = element_blank(),
+          legend.position = "none") +
+    ylab(paste0("Adjusted GMV differences\n(", label, ")")) +
+    annotate("text", x = 1.5, y = ylim[2] * 0.93,
+             label = paste("p =", pval), size = 5)
+}
+
+# Generate plots
+p_sum    <- plot_halfviolin(data2, "sum_resid", "Sum of ROIs")
+p_fiorb2 <- plot_halfviolin(data2, "Frontal_Inf_Orb_2_L_resid", "Frontal_Inf_Orb_2_L")
+p_fitri  <- plot_halfviolin(data2, "Frontal_Inf_Tri_L_resid", "Frontal_Inf_Tri_L")
+p_rectus <- plot_halfviolin(data2, "Rectus_R_resid", "Rectus_R")
+p_tml    <- plot_halfviolin(data2, "Temporal_Mid_L_resid", "Temporal_Mid_L")
+p_tmr    <- plot_halfviolin(data2, "Temporal_Mid_R_resid", "Temporal_Mid_R")
+
+# Save plots
+ggsave("Frontal_Inf_Orb_2_L.pdf", p_fiorb2, width = 4, height = 4)
+ggsave("Temporal_Mid_R.pdf",       p_tmr,    width = 4, height = 4)
+ggsave("Rectus_R.pdf",             p_rectus, width = 4, height = 4)
+ggsave("Frontal_Inf_Tri_L.pdf",    p_fitri,  width = 4, height = 4)
+ggsave("Temporal_Mid_L.pdf",       p_tml,    width = 4, height = 4)
+ggsave("SumROIs.pdf",              p_sum,    width = 4, height = 4)
